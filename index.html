@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ghana Passport Photo · 35×45mm</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<style>
+  :root {
+    --bg: #0b0e18;
+    --bg2: #121626;
+    --sidebar: #111524;
+    --card: rgba(255,255,255,0.035);
+    --stroke: rgba(255,255,255,0.08);
+    --ink: #e9ecf5;
+    --muted: #9aa3bd;
+    --accent: #6c8cff;
+    --accent2: #b06cff;
+    --gh: #fcd116;
+    --gh2: #006b3f;
+    --gh3: #ce1126;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --sidebar-w: 360px;
+  }
+
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 15% -10%, rgba(108,140,255,0.14), transparent 60%),
+      radial-gradient(900px 500px at 95% 5%, rgba(176,108,255,0.12), transparent 55%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  /* App Shell Layout */
+  .app-shell {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .app-sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: rgba(15, 18, 32, 0.85);
+    border-right: 1px solid var(--stroke);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .sidebar-header {
+    padding: 1.15rem 1.25rem;
+    border-bottom: 1px solid var(--stroke);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .brand-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: .95rem;
+    letter-spacing: -.01em;
+    margin: 0;
+  }
+
+  .gh-flag-bar {
+    display: inline-flex;
+    flex-direction: column;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  }
+  .gh-flag-bar span { flex: 1; }
+  .gh-flag-bar .r { background: var(--gh3); }
+  .gh-flag-bar .y { background: var(--gh); }
+  .gh-flag-bar .g { background: var(--gh2); }
+
+  .sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar { width: 6px; }
+  .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+
+  .sidebar-section {
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--stroke);
+  }
+  .sidebar-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .sidebar-footer {
+    padding: .85rem 1.25rem;
+    border-top: 1px solid var(--stroke);
+    background: rgba(0,0,0,.18);
+    font-size: .74rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Main Workspace */
+  .app-main {
+    flex: 1;
+    min-width: 0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.95fr;
+    gap: 1.5rem;
+    align-items: start;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 991.98px) {
+    .app-shell { flex-direction: column; }
+    .app-sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid var(--stroke);
+    }
+    .workspace-grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--stroke);
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    color: var(--ink);
+  }
+  .card-body { padding: 1.25rem; }
+
+  .step-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); margin-bottom: .75rem;
+  }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; font-size: .72rem; font-weight: 800;
+  }
+
+  .file-drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; padding: 18px 14px; border-radius: 14px;
+    border: 1.5px dashed rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.02);
+    cursor: pointer; transition: .2s ease;
+    font-weight: 600; font-size: .84rem; color: var(--ink); text-align: center;
+  }
+  .file-drop:hover, .file-drop.dragover { border-color: var(--accent); background: rgba(108,140,255,0.08); }
+  .file-drop svg { opacity: .85; color: var(--accent); }
+  .file-drop input { display: none; }
+
+  #stageWrap {
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: rgba(0,0,0,0.22);
+    border: 1px dashed rgba(255,255,255,0.07);
+    padding: 1rem;
+  }
+  #stage {
+    position: relative; display: none; max-width: 100%;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    touch-action: none; user-select: none;
+    line-height: 0;
+  }
+  #stage img { display: block; max-width: 100%; max-height: 62vh; height: auto; pointer-events: none; }
+  #cropBox {
+    position: absolute; border: 2px solid #fff; box-sizing: border-box;
+    cursor: move;
+    box-shadow: 0 0 0 9999px rgba(8,10,20,0.6), 0 0 0 1px rgba(0,0,0,.4);
+  }
+  #cropBox::before, #cropBox::after {
+    content: ''; position: absolute; pointer-events: none;
+    background: rgba(255,255,255,.35);
+  }
+  #cropBox::before { top: 0; bottom: 0; left: 33.33%; width: 1px; }
+  #cropBox::after  { top: 0; bottom: 0; left: 66.66%; width: 1px; }
+  .grid-h {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: rgba(255,255,255,.35); pointer-events: none;
+  }
+  .grid-h.a { top: 33.33%; }
+  .grid-h.b { top: 66.66%; }
+
+  .guide-oval {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    top: 15%; width: 62%; height: 55%;
+    border: 1.5px dashed rgba(255,255,255,.55);
+    border-radius: 50%; pointer-events: none;
+  }
+  .guide-eyeline {
+    position: absolute; left: 0; right: 0; top: 43%; height: 0;
+    border-top: 1.5px dashed rgba(255,200,0,.85);
+    pointer-events: none;
+  }
+  .guide-eyeline::after {
+    content: 'EYES';
+    position: absolute; right: 4px; top: -14px;
+    font-size: 8px; font-weight: 800; letter-spacing: .1em;
+    color: rgba(255,200,0,.9);
+  }
+
+  .handle {
+    position: absolute; width: 16px; height: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: 2px solid #fff; border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,.5);
+    transition: transform .15s ease;
+  }
+  .handle:hover { transform: scale(1.15); }
+  .handle.br { right: -8px; bottom: -8px; cursor: nwse-resize; }
+  .handle.bl { left: -8px; bottom: -8px; cursor: nesw-resize; }
+  .handle.tr { right: -8px; top: -8px; cursor: nesw-resize; }
+  .handle.tl { left: -8px; top: -8px; cursor: nwse-resize; }
+
+  .form-label { color: var(--ink); font-weight: 600; font-size: .82rem; }
+  .form-range::-webkit-slider-thumb {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 2px 10px rgba(108,140,255,.6);
+  }
+  .form-range::-moz-range-thumb {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+  }
+  .form-range { background: rgba(255,255,255,0.08); border-radius: 99px; }
+
+  .val-pill {
+    display: inline-block; padding: 2px 9px; border-radius: 99px;
+    background: rgba(108,140,255,.15); color: #b9c6ff;
+    font-size: .73rem; font-weight: 700; border: 1px solid rgba(108,140,255,.3);
+  }
+
+  .color-options { display: flex; gap: 8px; margin-top: 6px; }
+  .color-option {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 9px 10px; border-radius: 11px;
+    border: 2px solid var(--stroke); background: rgba(255,255,255,0.03);
+    cursor: pointer; transition: .2s ease; font-weight: 600; font-size: .82rem;
+    color: var(--ink);
+  }
+  .color-option:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+  .color-option.active { border-color: var(--accent); background: rgba(108,140,255,0.1); }
+  .color-option.active .color-swatch { box-shadow: 0 0 0 2px rgba(108,140,255,.5); }
+  .color-swatch {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1px solid rgba(0,0,0,.2); flex-shrink: 0;
+  }
+  .color-swatch.white { background: #ffffff; }
+  .color-swatch.red   { background: #ce1126; }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 1rem;
+  }
+  .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; cursor: pointer; }
+  .toggle-switch input { display: none; }
+  .toggle-track {
+    position: absolute; inset: 0; border-radius: 99px;
+    background: rgba(255,255,255,0.12); transition: .2s ease;
+  }
+  .toggle-track::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; transition: .2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  }
+  .toggle-switch input:checked + .toggle-track {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+  }
+  .toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); }
+
+  .btn-glow {
+    border: none; border-radius: 12px; font-weight: 700; font-size: .88rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; padding: 11px 16px;
+    box-shadow: 0 10px 24px rgba(108,140,255,.35);
+    transition: .2s ease;
+  }
+  .btn-glow:hover { color:#fff; transform: translateY(-1px); box-shadow: 0 14px 30px rgba(108,140,255,.5); }
+  .btn-glow:active { transform: translateY(0); }
+  .btn-glow:disabled { opacity: .65; cursor: wait; transform: none; }
+
+  .btn-ghost {
+    border: 1px solid var(--stroke); border-radius: 12px;
+    background: rgba(255,255,255,0.03); color: var(--ink);
+    font-weight: 600; padding: 9px 14px; transition: .2s ease;
+    font-size: .83rem;
+  }
+  .btn-ghost:hover { color:#fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .btn-ghost.disabled { opacity: .45; pointer-events: none; }
+
+  .result-frame {
+    display: inline-block; padding: 14px; border-radius: 14px;
+    background:
+      linear-gradient(45deg, #cfd6e4 25%, transparent 25%) 0 0/16px 16px,
+      linear-gradient(-45deg, #cfd6e4 25%, transparent 25%) 0 8px/16px 16px,
+      linear-gradient(45deg, transparent 75%, #cfd6e4 75%) 8px -8px/16px 16px,
+      linear-gradient(-45deg, transparent 75%, #cfd6e4 75%) -8px 0/16px 16px,
+      #eef1f7;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+  }
+  #result {
+    display: block; max-width: 100%; height: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    background: #fff;
+  }
+
+  .info-line { color: var(--muted); font-size: .78rem; margin-top: .6rem; }
+
+  .badge-tag {
+    display: inline-block; font-size: .68rem; font-weight: 700;
+    padding: 3px 9px; border-radius: 99px;
+    background: rgba(0,107,63,.18); color: #6ee7b7;
+    border: 1px solid rgba(0,107,63,.35);
+    letter-spacing: .03em;
+  }
+
+  .hint { color: var(--muted); font-size: .72rem; margin-top: .35rem; line-height: 1.4; }
+
+  .compliance {
+    margin-top: .85rem; padding: .7rem .85rem; border-radius: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--stroke);
+    font-size: .8rem; text-align: left;
+  }
+  .compliance-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 3px 0;
+  }
+  .compliance-row .label { color: var(--muted); }
+  .compliance-row .val { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot.ok { background: var(--ok); }
+  .dot.warn { background: var(--warn); }
+  .dot.bad { background: var(--bad); }
+  .dot.idle { background: var(--muted); }
+
+  .auto-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .05em;
+    padding: 3px 9px; border-radius: 99px;
+    background: rgba(34,197,94,.15); color: #86efac;
+    border: 1px solid rgba(34,197,94,.35);
+  }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+    border-radius: 50%; animation: spin .6s linear infinite;
+    margin-right: 6px; vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .export-menu { display: flex; flex-direction: column; gap: 8px; margin-top: .85rem; }
+  .export-menu .btn { width: 100%; }
+
+  .sheet-controls {
+    padding: .85rem; border-radius: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--stroke);
+    text-align: left;
+  }
+  .sheet-controls .form-label { font-size: .78rem; }
+  .copy-options { display: flex; gap: 8px; margin-top: 6px; }
+  .copy-option {
+    flex: 1; text-align: center; padding: 7px 8px; border-radius: 10px;
+    border: 2px solid var(--stroke); background: rgba(255,255,255,0.03);
+    cursor: pointer; transition: .2s ease; font-weight: 700; font-size: .8rem;
+    color: var(--ink);
+  }
+  .copy-option:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
+  .copy-option.active { border-color: var(--accent); background: rgba(108,140,255,0.1); }
+  .copy-option.unavailable {
+    opacity: .35; cursor: not-allowed; pointer-events: none;
+    text-decoration: line-through;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- LEFT SIDEBAR: Controls & Configuration -->
+  <aside class="app-sidebar">
+    <div class="sidebar-header">
+      <h1 class="brand-title">
+        <span class="gh-flag-bar" aria-hidden="true">
+          <span class="r"></span>
+          <span class="y"></span>
+          <span class="g"></span>
+        </span>
+        Ghana Passport Studio
+      </h1>
+      <span class="badge-tag">35×45 mm</span>
+    </div>
+
+    <div class="sidebar-scroll">
+      <!-- Step 1: Upload -->
+      <div class="sidebar-section">
+        <div class="step-label"><span class="step-num">1</span> Photo Source</div>
+        <label class="file-drop" id="fileDrop">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tap to upload, take photo, drop, or paste</span>
+          <input type="file" id="fileInput" accept="image/*,.heic,.heif" capture="user">
+        </label>
+      </div>
+
+      <!-- Step 2: Adjustments -->
+      <div id="controls" style="display:none;" class="sidebar-section">
+        <div class="step-label"><span class="step-num">2</span> Photo Adjustments</div>
+
+        <label class="form-label d-flex justify-content-between">
+          <span>Inner border width</span>
+          <span class="val-pill"><span id="borderVal">0.5</span> mm</span>
+        </label>
+        <input type="range" id="borderRange" class="form-range" min="0" max="5" step="0.5" value="0.5">
+
+        <label class="form-label mt-3">Border color</label>
+        <div class="color-options" id="colorOptions">
+          <div class="color-option active" data-color="#ffffff">
+            <span class="color-swatch white"></span> White
+          </div>
+          <div class="color-option" data-color="#ce1126">
+            <span class="color-swatch red"></span> Red
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <span class="form-label mb-0">Replace background with AI</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="bgToggle">
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+
+        <div id="bgPanel" style="display:none;" class="mt-2">
+          <label class="form-label">Background color</label>
+          <div class="color-options" id="bgColorOptions">
+            <div class="color-option active" data-color="#ffffff">
+              <span class="color-swatch white"></span> White
+            </div>
+            <div class="color-option" data-color="#ce1126">
+              <span class="color-swatch red"></span> Red
+            </div>
+          </div>
+          <button id="removeBgBtn" class="btn btn-glow w-100 mt-3" type="button" disabled>
+            ✂ Remove Background
+          </button>
+          <div id="bgStatus" class="hint" role="status" aria-live="polite">
+            Click the button to remove the background with AI. Your photo stays in this browser.
+          </div>
+        </div>
+
+        <label class="form-label mt-3">Output format</label>
+        <div class="copy-options" id="formatOptions">
+          <div class="copy-option active" data-format="image/jpeg" data-ext="jpg">JPEG</div>
+          <div class="copy-option" data-format="image/png" data-ext="png">PNG</div>
+          <div class="copy-option" data-format="image/webp" data-ext="webp">WebP</div>
+        </div>
+
+        <label class="form-label d-flex justify-content-between mt-3">
+          <span>Output quality</span>
+          <span class="val-pill"><span id="qualityVal">100</span>%</span>
+        </label>
+        <input type="range" id="qualityRange" class="form-range" min="50" max="100" step="1" value="100">
+
+        <button id="renderBtn" class="btn btn-glow w-100 mt-3">
+          ✨ Render passport photo
+        </button>
+      </div>
+
+      <!-- Print Sheet Settings -->
+      <div class="sidebar-section">
+        <div class="step-label"><span class="step-num">3</span> Print Sheet Layout</div>
+        <div class="sheet-controls">
+          <label class="form-label d-flex justify-content-between mb-1">
+            <span>KP-108IN gap (100 × 148 mm)</span>
+            <span class="val-pill"><span id="gapVal">3</span> mm</span>
+          </label>
+          <input type="range" id="gapRange" class="form-range" min="0" max="10" step="1" value="3">
+
+          <div class="copy-options mt-2" id="copyOptions">
+            <div class="copy-option" data-copies="2">2 copies</div>
+            <div class="copy-option active" data-copies="4">4 copies</div>
+          </div>
+          <div class="hint" id="sheetHint" style="margin-top:.5rem;">
+            Each photo is strictly 35 × 45 mm (413 × 531 px) at 300 DPI.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <span>100% local — nothing leaves your browser.</span>
+    </div>
+  </aside>
+
+  <!-- RIGHT MAIN WORKSPACE: Cropper & Live Result -->
+  <main class="app-main">
+    <div class="workspace-grid">
+      <!-- Interactive Cropper Card -->
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="step-label mb-0">Interactive Crop &amp; Framing</div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="auto-badge" id="autoBadge" style="display:none;">✓ FACE DETECTED</span>
+              <button class="btn btn-ghost py-1 px-2" id="autoFitBtn" type="button">↺ Auto-fit</button>
+            </div>
+          </div>
+
+          <div id="stageWrap" class="text-center">
+            <div id="stage">
+              <img id="photo" alt="preview">
+              <div id="cropBox">
+                <div class="guide-oval"></div>
+                <div class="guide-eyeline"></div>
+                <div class="grid-h a"></div>
+                <div class="grid-h b"></div>
+                <div class="handle tl"></div>
+                <div class="handle tr"></div>
+                <div class="handle bl"></div>
+                <div class="handle br"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result & Export Card -->
+      <div class="card">
+        <div class="card-body text-center d-flex flex-column">
+          <div class="step-label justify-content-center">Biometric Preview &amp; Export</div>
+
+          <div class="d-flex align-items-center justify-content-center my-2">
+            <div class="result-frame">
+              <canvas id="result" width="413" height="531"></canvas>
+            </div>
+          </div>
+
+          <div class="info-line" id="resultInfo">413 × 531 px @ 300 DPI</div>
+
+          <div class="compliance" id="compliance">
+            <div class="compliance-row">
+              <span class="label"><span class="dot idle" id="dotHead"></span>Head height</span>
+              <span class="val" id="valHead">—</span>
+            </div>
+            <div class="compliance-row">
+              <span class="label"><span class="dot idle" id="dotEyes"></span>Eye line</span>
+              <span class="val" id="valEyes">—</span>
+            </div>
+            <div class="compliance-row">
+              <span class="label"><span class="dot idle" id="dotCenter"></span>Centering</span>
+              <span class="val" id="valCenter">—</span>
+            </div>
+          </div>
+
+          <div class="export-menu">
+            <a id="downloadBtn" class="btn btn-glow disabled" download="passport-photo.jpg">
+              ⬇ Download passport photo (JPG)
+            </a>
+            <a id="downloadSheetBtn" class="btn btn-ghost disabled" download="passport-sheet-kp108in.jpg">
+              🖨 Download KP-108IN print sheet (JPG)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+
+</body>
+</html>
