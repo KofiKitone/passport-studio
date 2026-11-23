@@ -4,145 +4,281 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ghana Passport Photo · 35×45mm</title>
+<script>
+  (() => {
+    const storageKey = 'gh-passport-theme';
+    const saved = localStorage.getItem(storageKey);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved === 'dark' || saved === 'light' ? saved : (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <style>
   :root {
-    --bg: #0b0e18;
-    --bg2: #121626;
-    --sidebar: #111524;
-    --card: rgba(255,255,255,0.035);
-    --stroke: rgba(255,255,255,0.08);
-    --ink: #e9ecf5;
-    --muted: #9aa3bd;
+    --canvas-bg: #f1f3f6;
+    --surface: #ffffff;
+    --surface-subtle: #f8fafc;
+    --surface-inset: #f1f5f9;
+    --stage-bg: #e8ecf1;
+    --stage-dot: #cbd5e1;
+    --row-divider: #eef2f6;
+    --overlay-scrim: rgba(15, 23, 42, 0.55);
+    --overlay-ring: rgba(15, 23, 42, 0.35);
+    --card-shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.03);
+    --stage-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
+    --result-shadow: 0 6px 20px rgba(15, 23, 42, 0.14);
+    --checker-a: #e2e8f0;
+    --checker-b: #f8fafc;
+    --stroke: #e2e8f0;
+    --stroke-strong: #cbd5e1;
+    --ink: #0f172a;
+    --ink-secondary: #475569;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: #eff6ff;
+    --accent-border: #bfdbfe;
+    --accent-glow: rgba(37, 99, 235, 0.2);
+    --badge-bg: #ecfdf5;
+    --badge-ink: #047857;
+    --badge-border: #a7f3d0;
+    --gh-yellow: #fcd116;
+    --gh-green: #006b3f;
+    --gh-red: #ce1126;
+    --ok: #16a34a;
+    --warn: #d97706;
+    --bad: #dc2626;
+    --sidebar-w: 376px;
+  }
+
+  html[data-theme="dark"] {
+    --canvas-bg: #0b0e18;
+    --surface: #121626;
+    --surface-subtle: #171c30;
+    --surface-inset: #0e1220;
+    --stage-bg: #0d111e;
+    --stage-dot: rgba(148, 163, 184, 0.18);
+    --row-divider: rgba(255, 255, 255, 0.06);
+    --overlay-scrim: rgba(8, 10, 20, 0.65);
+    --overlay-ring: rgba(0, 0, 0, 0.45);
+    --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    --stage-shadow: 0 14px 36px rgba(0, 0, 0, 0.5);
+    --result-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --checker-a: #283048;
+    --checker-b: #1b2136;
+    --stroke: rgba(255, 255, 255, 0.09);
+    --stroke-strong: rgba(255, 255, 255, 0.18);
+    --ink: #f1f5f9;
+    --ink-secondary: #cbd5e1;
+    --muted: #94a3b8;
     --accent: #6c8cff;
-    --accent2: #b06cff;
-    --gh: #fcd116;
-    --gh2: #006b3f;
-    --gh3: #ce1126;
+    --accent-hover: #5878f5;
+    --accent-soft: rgba(108, 140, 255, 0.14);
+    --accent-border: rgba(108, 140, 255, 0.35);
+    --accent-glow: rgba(108, 140, 255, 0.28);
+    --badge-bg: rgba(16, 185, 129, 0.15);
+    --badge-ink: #6ee7b7;
+    --badge-border: rgba(16, 185, 129, 0.35);
     --ok: #22c55e;
     --warn: #f59e0b;
     --bad: #ef4444;
-    --sidebar-w: 360px;
   }
 
   * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background:
-      radial-gradient(1200px 600px at 15% -10%, rgba(108,140,255,0.14), transparent 60%),
-      radial-gradient(900px 500px at 95% 5%, rgba(176,108,255,0.12), transparent 55%),
-      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-    background-attachment: fixed;
+    background-color: var(--canvas-bg);
     color: var(--ink);
     min-height: 100vh;
     margin: 0;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color .2s ease, color .2s ease;
   }
 
-  /* App Shell Layout */
+  /* App Shell */
   .app-shell {
     display: flex;
     min-height: 100vh;
   }
 
+  /* Left Inspector Sidebar */
   .app-sidebar {
     width: var(--sidebar-w);
     flex-shrink: 0;
-    background: rgba(15, 18, 32, 0.85);
+    background: var(--surface);
     border-right: 1px solid var(--stroke);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     display: flex;
     flex-direction: column;
     height: 100vh;
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 20;
+    transition: background-color .2s ease, border-color .2s ease;
   }
 
   .sidebar-header {
-    padding: 1.15rem 1.25rem;
+    padding: 1rem 1.25rem;
     border-bottom: 1px solid var(--stroke);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    background: var(--surface);
   }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .theme-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--stroke);
+    background: var(--surface-subtle);
+    color: var(--ink-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s ease;
+    padding: 0;
+  }
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--stroke-strong);
+    background: var(--surface-inset);
+  }
+  html[data-theme="light"] .icon-sun { display: none; }
+  html[data-theme="dark"] .icon-moon { display: none; }
 
   .brand-title {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-weight: 800;
-    font-size: .95rem;
-    letter-spacing: -.01em;
+    font-weight: 700;
+    font-size: .94rem;
+    letter-spacing: -.015em;
+    color: var(--ink);
     margin: 0;
   }
 
   .gh-flag-bar {
     display: inline-flex;
     flex-direction: column;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     border-radius: 4px;
     overflow: hidden;
     flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,.4);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.16);
   }
   .gh-flag-bar span { flex: 1; }
-  .gh-flag-bar .r { background: var(--gh3); }
-  .gh-flag-bar .y { background: var(--gh); }
-  .gh-flag-bar .g { background: var(--gh2); }
+  .gh-flag-bar .r { background: var(--gh-red); }
+  .gh-flag-bar .y { background: var(--gh-yellow); }
+  .gh-flag-bar .g { background: var(--gh-green); }
 
   .sidebar-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 1.25rem;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  .sidebar-scroll::-webkit-scrollbar { width: 6px; }
+  .sidebar-scroll::-webkit-scrollbar { width: 5px; }
   .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-  .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+  .sidebar-scroll::-webkit-scrollbar-thumb { background: var(--stroke-strong); border-radius: 99px; }
 
-  .sidebar-section {
-    padding-bottom: 1.25rem;
-    margin-bottom: 1.25rem;
-    border-bottom: 1px solid var(--stroke);
+  /* Grouped Inspector Modules Inside Sidebar */
+  .inspector-group {
+    background: var(--surface-subtle);
+    border: 1px solid var(--stroke);
+    border-radius: 14px;
+    padding: .95rem 1rem;
   }
-  .sidebar-section:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
+
+  .group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .75rem;
+  }
+
+  .step-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: .68rem;
+    font-weight: 800;
+  }
+
+  .group-tag {
+    font-size: .67rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    padding: 1px 7px;
+    border-radius: 99px;
+  }
+
+  .control-divider {
+    height: 1px;
+    background: var(--stroke);
+    margin: .9rem 0;
   }
 
   .sidebar-footer {
-    padding: .85rem 1.25rem;
+    padding: .8rem 1.25rem;
     border-top: 1px solid var(--stroke);
-    background: rgba(0,0,0,.18);
+    background: var(--surface-subtle);
     font-size: .74rem;
     color: var(--muted);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
   }
 
   /* Main Workspace */
   .app-main {
     flex: 1;
     min-width: 0;
-    padding: 1.5rem;
+    padding: 1.75rem;
     display: flex;
     flex-direction: column;
   }
 
   .workspace-grid {
     display: grid;
-    grid-template-columns: 1.25fr 0.95fr;
+    grid-template-columns: 1.22fr 0.98fr;
     gap: 1.5rem;
     align-items: start;
-    max-width: 1280px;
+    max-width: 1260px;
     width: 100%;
     margin: 0 auto;
   }
@@ -156,278 +292,526 @@
       border-right: none;
       border-bottom: 1px solid var(--stroke);
     }
+    .app-main { padding: 1rem; }
     .workspace-grid { grid-template-columns: 1fr; }
   }
 
+  /* Workspace Cards */
   .card {
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--stroke);
-    border-radius: 18px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
     color: var(--ink);
   }
-  .card-body { padding: 1.25rem; }
+  .card-body { padding: 1.35rem; }
 
-  .step-label {
-    display: flex; align-items: center; gap: 8px;
-    font-size: .75rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .08em;
-    color: var(--muted); margin-bottom: .75rem;
-  }
-  .step-num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 6px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; font-size: .72rem; font-weight: 800;
-  }
-
+  /* Upload Dropzone */
   .file-drop {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 8px; padding: 18px 14px; border-radius: 14px;
-    border: 1.5px dashed rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.02);
-    cursor: pointer; transition: .2s ease;
-    font-weight: 600; font-size: .84rem; color: var(--ink); text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 11px;
+    border: 1.5px dashed var(--stroke-strong);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all .18s ease;
+    text-align: left;
   }
-  .file-drop:hover, .file-drop.dragover { border-color: var(--accent); background: rgba(108,140,255,0.08); }
-  .file-drop svg { opacity: .85; color: var(--accent); }
+  .file-drop:hover, .file-drop.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .file-drop .upload-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .file-drop-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .file-drop-title {
+    font-weight: 600;
+    font-size: .82rem;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .file-drop-sub {
+    font-size: .71rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
   .file-drop input { display: none; }
 
+  /* Crop Stage */
   #stageWrap {
-    min-height: 360px;
+    min-height: 410px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 14px;
-    background: rgba(0,0,0,0.22);
-    border: 1px dashed rgba(255,255,255,0.07);
-    padding: 1rem;
+    border-radius: 12px;
+    background-color: var(--stage-bg);
+    background-image: radial-gradient(var(--stage-dot) 1px, transparent 1px);
+    background-size: 16px 16px;
+    border: 1px solid var(--stroke);
+    padding: 1.25rem;
+    position: relative;
   }
+
+  #stageWrap:has(#stage[style*="display: block"]) .stage-placeholder,
+  #stageWrap:has(#stage[style*="display: inline-block"]) .stage-placeholder {
+    display: none;
+  }
+
+  .stage-placeholder {
+    text-align: center;
+    color: var(--muted);
+    max-width: 240px;
+    pointer-events: none;
+  }
+  .stage-placeholder svg {
+    color: var(--muted);
+    opacity: .7;
+    margin-bottom: 8px;
+  }
+  .stage-placeholder p {
+    font-size: .8rem;
+    margin: 0;
+    line-height: 1.45;
+  }
+
   #stage {
-    position: relative; display: none; max-width: 100%;
-    border-radius: 12px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,.4);
-    touch-action: none; user-select: none;
+    position: relative;
+    display: none;
+    max-width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--stage-shadow);
+    touch-action: none;
+    user-select: none;
     line-height: 0;
   }
-  #stage img { display: block; max-width: 100%; max-height: 62vh; height: auto; pointer-events: none; }
+  #stage img {
+    display: block;
+    max-width: 100%;
+    max-height: 62vh;
+    height: auto;
+    pointer-events: none;
+  }
   #cropBox {
-    position: absolute; border: 2px solid #fff; box-sizing: border-box;
+    position: absolute;
+    border: 2px solid #ffffff;
+    box-sizing: border-box;
     cursor: move;
-    box-shadow: 0 0 0 9999px rgba(8,10,20,0.6), 0 0 0 1px rgba(0,0,0,.4);
+    box-shadow: 0 0 0 9999px var(--overlay-scrim), 0 0 0 1px var(--overlay-ring);
   }
   #cropBox::before, #cropBox::after {
-    content: ''; position: absolute; pointer-events: none;
-    background: rgba(255,255,255,.35);
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.45);
   }
   #cropBox::before { top: 0; bottom: 0; left: 33.33%; width: 1px; }
   #cropBox::after  { top: 0; bottom: 0; left: 66.66%; width: 1px; }
   .grid-h {
-    position: absolute; left: 0; right: 0; height: 1px;
-    background: rgba(255,255,255,.35); pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.45);
+    pointer-events: none;
   }
   .grid-h.a { top: 33.33%; }
   .grid-h.b { top: 66.66%; }
 
   .guide-oval {
-    position: absolute; left: 50%; transform: translateX(-50%);
-    top: 15%; width: 62%; height: 55%;
-    border: 1.5px dashed rgba(255,255,255,.55);
-    border-radius: 50%; pointer-events: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 15%;
+    width: 62%;
+    height: 55%;
+    border: 1.5px dashed rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    pointer-events: none;
   }
   .guide-eyeline {
-    position: absolute; left: 0; right: 0; top: 43%; height: 0;
-    border-top: 1.5px dashed rgba(255,200,0,.85);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 43%;
+    height: 0;
+    border-top: 1.5px dashed #facc15;
     pointer-events: none;
   }
   .guide-eyeline::after {
     content: 'EYES';
-    position: absolute; right: 4px; top: -14px;
-    font-size: 8px; font-weight: 800; letter-spacing: .1em;
-    color: rgba(255,200,0,.9);
+    position: absolute;
+    right: 5px;
+    top: -14px;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    color: #fef08a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
   }
 
   .handle {
-    position: absolute; width: 16px; height: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: 2px solid #fff; border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,.5);
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: var(--accent);
+    border: 2.5px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.4);
     transition: transform .15s ease;
   }
-  .handle:hover { transform: scale(1.15); }
+  .handle:hover { transform: scale(1.2); }
   .handle.br { right: -8px; bottom: -8px; cursor: nwse-resize; }
   .handle.bl { left: -8px; bottom: -8px; cursor: nesw-resize; }
   .handle.tr { right: -8px; top: -8px; cursor: nesw-resize; }
   .handle.tl { left: -8px; top: -8px; cursor: nwse-resize; }
 
-  .form-label { color: var(--ink); font-weight: 600; font-size: .82rem; }
+  /* Form Controls */
+  .form-label {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: .8rem;
+    margin-bottom: .35rem;
+  }
+
+  .form-range {
+    height: 6px;
+    background: var(--stroke-strong);
+    border-radius: 99px;
+  }
   .form-range::-webkit-slider-thumb {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    box-shadow: 0 2px 10px rgba(108,140,255,.6);
+    background: var(--accent);
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
   }
   .form-range::-moz-range-thumb {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
+    background: var(--accent);
+    border: 2px solid #ffffff;
   }
-  .form-range { background: rgba(255,255,255,0.08); border-radius: 99px; }
 
   .val-pill {
-    display: inline-block; padding: 2px 9px; border-radius: 99px;
-    background: rgba(108,140,255,.15); color: #b9c6ff;
-    font-size: .73rem; font-weight: 700; border: 1px solid rgba(108,140,255,.3);
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: .72rem;
+    font-weight: 700;
+    border: 1px solid var(--stroke);
+    font-variant-numeric: tabular-nums;
   }
 
-  .color-options { display: flex; gap: 8px; margin-top: 6px; }
+  /* Color & Segmented Option Buttons */
+  .color-options { display: flex; gap: 8px; margin-top: 4px; }
   .color-option {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    gap: 8px; padding: 9px 10px; border-radius: 11px;
-    border: 2px solid var(--stroke); background: rgba(255,255,255,0.03);
-    cursor: pointer; transition: .2s ease; font-weight: 600; font-size: .82rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 9px;
+    border: 1.5px solid var(--stroke);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all .15s ease;
+    font-weight: 600;
+    font-size: .8rem;
+    color: var(--ink-secondary);
+  }
+  .color-option:hover {
+    border-color: var(--stroke-strong);
     color: var(--ink);
   }
-  .color-option:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
-  .color-option.active { border-color: var(--accent); background: rgba(108,140,255,0.1); }
-  .color-option.active .color-swatch { box-shadow: 0 0 0 2px rgba(108,140,255,.5); }
+  .color-option.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
   .color-swatch {
-    width: 18px; height: 18px; border-radius: 50%;
-    border: 1px solid rgba(0,0,0,.2); flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid rgba(15, 23, 42, 0.22);
+    flex-shrink: 0;
   }
   .color-swatch.white { background: #ffffff; }
   .color-swatch.red   { background: #ce1126; }
 
-  .toggle-row {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-top: 1rem;
+  .copy-options {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    background: var(--surface-inset);
+    padding: 3px;
+    border-radius: 9px;
+    border: 1px solid var(--stroke);
   }
-  .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; cursor: pointer; }
+  .copy-option {
+    flex: 1;
+    text-align: center;
+    padding: 6px 8px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: all .15s ease;
+    font-weight: 600;
+    font-size: .78rem;
+    color: var(--ink-secondary);
+  }
+  .copy-option:hover { color: var(--ink); }
+  .copy-option.active {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--stroke);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  }
+  .copy-option.unavailable {
+    opacity: .38;
+    cursor: not-allowed;
+    pointer-events: none;
+    text-decoration: line-through;
+  }
+
+  /* AI Background Sub-panel */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .toggle-switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; cursor: pointer; }
   .toggle-switch input { display: none; }
   .toggle-track {
-    position: absolute; inset: 0; border-radius: 99px;
-    background: rgba(255,255,255,0.12); transition: .2s ease;
-  }
-  .toggle-track::after {
-    content: ''; position: absolute; top: 3px; left: 3px;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: #fff; transition: .2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,.3);
-  }
-  .toggle-switch input:checked + .toggle-track {
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-  }
-  .toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); }
-
-  .btn-glow {
-    border: none; border-radius: 12px; font-weight: 700; font-size: .88rem;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #fff; padding: 11px 16px;
-    box-shadow: 0 10px 24px rgba(108,140,255,.35);
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    background: var(--stroke-strong);
     transition: .2s ease;
   }
-  .btn-glow:hover { color:#fff; transform: translateY(-1px); box-shadow: 0 14px 30px rgba(108,140,255,.5); }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2.5px;
+    left: 2.5px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    background: #ffffff;
+    transition: .2s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+  }
+  .toggle-switch input:checked + .toggle-track { background: var(--accent); }
+  .toggle-switch input:checked + .toggle-track::after { transform: translateX(18px); }
+
+  #bgPanel {
+    background: var(--surface);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+    padding: .75rem;
+    margin-top: .65rem;
+  }
+
+  /* Buttons */
+  .btn-glow {
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .84rem;
+    background: var(--accent);
+    color: #ffffff;
+    padding: 10px 16px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12), 0 4px 12px var(--accent-glow);
+    transition: all .16s ease;
+  }
+  .btn-glow:hover {
+    background: var(--accent-hover);
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
   .btn-glow:active { transform: translateY(0); }
-  .btn-glow:disabled { opacity: .65; cursor: wait; transform: none; }
+  .btn-glow:disabled, .btn-glow.disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+  }
 
   .btn-ghost {
-    border: 1px solid var(--stroke); border-radius: 12px;
-    background: rgba(255,255,255,0.03); color: var(--ink);
-    font-weight: 600; padding: 9px 14px; transition: .2s ease;
+    border: 1px solid var(--stroke-strong);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    padding: 9px 14px;
+    transition: all .16s ease;
     font-size: .83rem;
   }
-  .btn-ghost:hover { color:#fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-  .btn-ghost.disabled { opacity: .45; pointer-events: none; }
+  .btn-ghost:hover {
+    color: var(--ink);
+    background: var(--surface-subtle);
+    border-color: var(--muted);
+  }
+  .btn-ghost.disabled {
+    opacity: .45;
+    pointer-events: none;
+  }
 
+  /* Result Preview */
   .result-frame {
-    display: inline-block; padding: 14px; border-radius: 14px;
+    display: inline-block;
+    padding: 14px;
+    border-radius: 12px;
     background:
-      linear-gradient(45deg, #cfd6e4 25%, transparent 25%) 0 0/16px 16px,
-      linear-gradient(-45deg, #cfd6e4 25%, transparent 25%) 0 8px/16px 16px,
-      linear-gradient(45deg, transparent 75%, #cfd6e4 75%) 8px -8px/16px 16px,
-      linear-gradient(-45deg, transparent 75%, #cfd6e4 75%) -8px 0/16px 16px,
-      #eef1f7;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+      linear-gradient(45deg, var(--checker-a) 25%, transparent 25%) 0 0/16px 16px,
+      linear-gradient(-45deg, var(--checker-a) 25%, transparent 25%) 0 8px/16px 16px,
+      linear-gradient(45deg, transparent 75%, var(--checker-a) 75%) 8px -8px/16px 16px,
+      linear-gradient(-45deg, transparent 75%, var(--checker-a) 75%) -8px 0/16px 16px,
+      var(--checker-b);
+    border: 1px solid var(--stroke);
   }
   #result {
-    display: block; max-width: 100%; height: auto;
-    box-shadow: 0 8px 24px rgba(0,0,0,.25);
-    background: #fff;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 2px;
+    box-shadow: var(--result-shadow);
+    background: #ffffff;
   }
 
-  .info-line { color: var(--muted); font-size: .78rem; margin-top: .6rem; }
+  .info-line {
+    color: var(--muted);
+    font-size: .77rem;
+    font-weight: 500;
+    margin-top: .65rem;
+  }
 
   .badge-tag {
-    display: inline-block; font-size: .68rem; font-weight: 700;
-    padding: 3px 9px; border-radius: 99px;
-    background: rgba(0,107,63,.18); color: #6ee7b7;
-    border: 1px solid rgba(0,107,63,.35);
-    letter-spacing: .03em;
+    display: inline-flex;
+    align-items: center;
+    font-size: .69rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 99px;
+    background: var(--badge-bg);
+    color: var(--badge-ink);
+    border: 1px solid var(--badge-border);
+    letter-spacing: .02em;
   }
 
-  .hint { color: var(--muted); font-size: .72rem; margin-top: .35rem; line-height: 1.4; }
+  .hint {
+    color: var(--muted);
+    font-size: .72rem;
+    margin-top: .4rem;
+    line-height: 1.42;
+  }
 
+  /* Compliance Box */
   .compliance {
-    margin-top: .85rem; padding: .7rem .85rem; border-radius: 12px;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--stroke);
-    font-size: .8rem; text-align: left;
+    margin-top: .9rem;
+    padding: .75rem .9rem;
+    border-radius: 11px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--stroke);
+    font-size: .8rem;
+    text-align: left;
   }
   .compliance-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
   }
-  .compliance-row .label { color: var(--muted); }
-  .compliance-row .val { font-weight: 700; font-variant-numeric: tabular-nums; }
-  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .compliance-row + .compliance-row {
+    border-top: 1px solid var(--row-divider);
+  }
+  .compliance-row .label {
+    color: var(--ink-secondary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+  }
+  .compliance-row .val {
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
   .dot.ok { background: var(--ok); }
   .dot.warn { background: var(--warn); }
   .dot.bad { background: var(--bad); }
   .dot.idle { background: var(--muted); }
 
   .auto-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: .68rem; font-weight: 700; letter-spacing: .05em;
-    padding: 3px 9px; border-radius: 99px;
-    background: rgba(34,197,94,.15); color: #86efac;
-    border: 1px solid rgba(34,197,94,.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 3px 9px;
+    border-radius: 99px;
+    background: var(--badge-bg);
+    color: var(--badge-ink);
+    border: 1px solid var(--badge-border);
   }
 
   .spinner {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
-    border-radius: 50%; animation: spin .6s linear infinite;
-    margin-right: 6px; vertical-align: -2px;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.45);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    margin-right: 6px;
+    vertical-align: -2px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .export-menu { display: flex; flex-direction: column; gap: 8px; margin-top: .85rem; }
+  .export-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: .95rem;
+  }
   .export-menu .btn { width: 100%; }
 
   .sheet-controls {
-    padding: .85rem; border-radius: 12px;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--stroke);
     text-align: left;
   }
   .sheet-controls .form-label { font-size: .78rem; }
-  .copy-options { display: flex; gap: 8px; margin-top: 6px; }
-  .copy-option {
-    flex: 1; text-align: center; padding: 7px 8px; border-radius: 10px;
-    border: 2px solid var(--stroke); background: rgba(255,255,255,0.03);
-    cursor: pointer; transition: .2s ease; font-weight: 700; font-size: .8rem;
-    color: var(--ink);
-  }
-  .copy-option:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); }
-  .copy-option.active { border-color: var(--accent); background: rgba(108,140,255,0.1); }
-  .copy-option.unavailable {
-    opacity: .35; cursor: not-allowed; pointer-events: none;
-    text-decoration: line-through;
-  }
 </style>
 </head>
 <body>
 
 <div class="app-shell">
-  <!-- LEFT SIDEBAR: Controls & Configuration -->
+  <!-- LEFT SIDEBAR -->
   <aside class="app-sidebar">
     <div class="sidebar-header">
       <h1 class="brand-title">
@@ -438,35 +822,57 @@
         </span>
         Ghana Passport Studio
       </h1>
-      <span class="badge-tag">35×45 mm</span>
+      <div class="header-actions">
+        <span class="badge-tag">35 × 45 mm</span>
+        <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle dark or light theme" title="Toggle theme">
+          <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+          <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="sidebar-scroll">
-      <!-- Step 1: Upload -->
-      <div class="sidebar-section">
-        <div class="step-label"><span class="step-num">1</span> Photo Source</div>
+      <!-- Group 1: Photo Source -->
+      <div class="inspector-group">
+        <div class="group-head">
+          <div class="step-label"><span class="step-num">1</span> Source Photo</div>
+          <span class="group-tag">Input</span>
+        </div>
         <label class="file-drop" id="fileDrop">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-          <span>Tap to upload, take photo, drop, or paste</span>
+          <div class="upload-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="file-drop-text">
+            <span class="file-drop-title">Choose, snap, drop, or paste photo</span>
+            <span class="file-drop-sub">JPG, PNG, WebP, HEIC supported</span>
+          </div>
           <input type="file" id="fileInput" accept="image/*,.heic,.heif" capture="user">
         </label>
       </div>
 
-      <!-- Step 2: Adjustments -->
-      <div id="controls" style="display:none;" class="sidebar-section">
-        <div class="step-label"><span class="step-num">2</span> Photo Adjustments</div>
+      <!-- Group 2: Styling, AI Background & Export Format -->
+      <div id="controls" style="display:none;" class="inspector-group">
+        <div class="group-head">
+          <div class="step-label"><span class="step-num">2</span> Frame &amp; Format</div>
+          <span class="group-tag">Editor</span>
+        </div>
 
-        <label class="form-label d-flex justify-content-between">
-          <span>Inner border width</span>
+        <label class="form-label d-flex justify-content-between align-items-center">
+          <span>Inner border</span>
           <span class="val-pill"><span id="borderVal">0.5</span> mm</span>
         </label>
         <input type="range" id="borderRange" class="form-range" min="0" max="5" step="0.5" value="0.5">
 
-        <label class="form-label mt-3">Border color</label>
+        <label class="form-label mt-2">Border color</label>
         <div class="color-options" id="colorOptions">
           <div class="color-option active" data-color="#ffffff">
             <span class="color-swatch white"></span> White
@@ -476,6 +882,8 @@
           </div>
         </div>
 
+        <div class="control-divider"></div>
+
         <div class="toggle-row">
           <span class="form-label mb-0">Replace background with AI</span>
           <label class="toggle-switch">
@@ -484,8 +892,8 @@
           </label>
         </div>
 
-        <div id="bgPanel" style="display:none;" class="mt-2">
-          <label class="form-label">Background color</label>
+        <div id="bgPanel" style="display:none;">
+          <label class="form-label">Background fill</label>
           <div class="color-options" id="bgColorOptions">
             <div class="color-option active" data-color="#ffffff">
               <span class="color-swatch white"></span> White
@@ -494,23 +902,25 @@
               <span class="color-swatch red"></span> Red
             </div>
           </div>
-          <button id="removeBgBtn" class="btn btn-glow w-100 mt-3" type="button" disabled>
+          <button id="removeBgBtn" class="btn btn-glow w-100 mt-2" type="button" disabled>
             ✂ Remove Background
           </button>
           <div id="bgStatus" class="hint" role="status" aria-live="polite">
-            Click the button to remove the background with AI. Your photo stays in this browser.
+            Click to remove background locally with AI.
           </div>
         </div>
 
-        <label class="form-label mt-3">Output format</label>
+        <div class="control-divider"></div>
+
+        <label class="form-label">File format</label>
         <div class="copy-options" id="formatOptions">
           <div class="copy-option active" data-format="image/jpeg" data-ext="jpg">JPEG</div>
           <div class="copy-option" data-format="image/png" data-ext="png">PNG</div>
           <div class="copy-option" data-format="image/webp" data-ext="webp">WebP</div>
         </div>
 
-        <label class="form-label d-flex justify-content-between mt-3">
-          <span>Output quality</span>
+        <label class="form-label d-flex justify-content-between align-items-center mt-3">
+          <span>Compression quality</span>
           <span class="val-pill"><span id="qualityVal">100</span>%</span>
         </label>
         <input type="range" id="qualityRange" class="form-range" min="50" max="100" step="1" value="100">
@@ -520,12 +930,15 @@
         </button>
       </div>
 
-      <!-- Print Sheet Settings -->
-      <div class="sidebar-section">
-        <div class="step-label"><span class="step-num">3</span> Print Sheet Layout</div>
+      <!-- Group 3: Print Sheet -->
+      <div class="inspector-group">
+        <div class="group-head">
+          <div class="step-label"><span class="step-num">3</span> KP-108IN Sheet</div>
+          <span class="group-tag">100×148 mm</span>
+        </div>
         <div class="sheet-controls">
-          <label class="form-label d-flex justify-content-between mb-1">
-            <span>KP-108IN gap (100 × 148 mm)</span>
+          <label class="form-label d-flex justify-content-between align-items-center mb-1">
+            <span>Photo spacing gap</span>
             <span class="val-pill"><span id="gapVal">3</span> mm</span>
           </label>
           <input type="range" id="gapRange" class="form-range" min="0" max="10" step="1" value="3">
@@ -534,7 +947,7 @@
             <div class="copy-option" data-copies="2">2 copies</div>
             <div class="copy-option active" data-copies="4">4 copies</div>
           </div>
-          <div class="hint" id="sheetHint" style="margin-top:.5rem;">
+          <div class="hint" id="sheetHint">
             Each photo is strictly 35 × 45 mm (413 × 531 px) at 300 DPI.
           </div>
         </div>
@@ -542,21 +955,21 @@
     </div>
 
     <div class="sidebar-footer">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
-      <span>100% local — nothing leaves your browser.</span>
+      <span>Private — runs 100% inside your browser.</span>
     </div>
   </aside>
 
-  <!-- RIGHT MAIN WORKSPACE: Cropper & Live Result -->
+  <!-- RIGHT MAIN WORKSPACE -->
   <main class="app-main">
     <div class="workspace-grid">
-      <!-- Interactive Cropper Card -->
+      <!-- Cropper Card -->
       <div class="card">
         <div class="card-body">
-          <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center justify-content-between mb-3">
             <div class="step-label mb-0">Interactive Crop &amp; Framing</div>
             <div class="d-flex align-items-center gap-2">
               <span class="auto-badge" id="autoBadge" style="display:none;">✓ FACE DETECTED</span>
@@ -565,6 +978,15 @@
           </div>
 
           <div id="stageWrap" class="text-center">
+            <div class="stage-placeholder">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <circle cx="12" cy="10" r="3"/>
+                <path d="M7 20c1.2-3 3.2-4.5 5-4.5s3.8 1.5 5 4.5"/>
+              </svg>
+              <p>Select a portrait from the sidebar to align head &amp; eye guidelines.</p>
+            </div>
+
             <div id="stage">
               <img id="photo" alt="preview">
               <div id="cropBox">
@@ -585,9 +1007,12 @@
       <!-- Result & Export Card -->
       <div class="card">
         <div class="card-body text-center d-flex flex-column">
-          <div class="step-label justify-content-center">Biometric Preview &amp; Export</div>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="step-label mb-0">Biometric Output</div>
+            <span style="font-size: .68rem; color: var(--muted); font-weight: 600;">300 DPI · ICAO</span>
+          </div>
 
-          <div class="d-flex align-items-center justify-content-center my-2">
+          <div class="d-flex align-items-center justify-content-center my-1">
             <div class="result-frame">
               <canvas id="result" width="413" height="531"></canvas>
             </div>
@@ -624,6 +1049,34 @@
   </main>
 </div>
 
+<script>
+  (() => {
+    const storageKey = 'gh-passport-theme';
+    const root = document.documentElement;
+    const toggleBtn = document.getElementById('themeToggle');
+
+    function applyTheme(theme) {
+      root.setAttribute('data-theme', theme);
+      try {
+        localStorage.setItem(storageKey, theme);
+      } catch (_) {}
+      if (toggleBtn) {
+        const nextLabel = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+        toggleBtn.setAttribute('title', nextLabel);
+        toggleBtn.setAttribute('aria-label', nextLabel);
+      }
+    }
+
+    applyTheme(root.getAttribute('data-theme') || 'light');
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+    }
+  })();
+</script>
 <script type="module" src="/src/main.js"></script>
 
 </body>
